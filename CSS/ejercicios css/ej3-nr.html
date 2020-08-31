@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!--
+    Daniel Barragan Alvarez
+    ie702554
+-->
+
+<html
+  lang="en"
+  xmlns:mso="urn:schemas-microsoft-com:office:office"
+  xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+
+    <style>
+      td {
+        text-align: center;
+      }
+
+      #warning {
+        background-color: orangered;
+        color: white;
+      }
+      [data-val="pos"] {
+        font-size: xx-large;
+        background-color: pink;
+      }
+      [data-val="neg"]::before {
+        font-size: xx-large;
+        background-color: pink;
+      }
+      table:first-of-type tr:nth-child(2) {
+        background-color: greenyellow;
+      }
+      table:first-of-type tr:nth-child(n) td:nth-child(7) {
+        background-color: greenyellow;
+      }
+      table:first-of-type tr:first-child td:nth-child(3n -1) {
+        background-color: cornflowerblue;
+        font-size: xx-large;
+      }
+      table:first-of-type tr:last-child td:nth-child(1),
+      tr:nth-child(1) + tr:nth-child(3) {
+        background-color: turquoise;
+      }
+
+      table:nth-of-type(2) tr:first-child :nth-child(6) {
+        background-color: gray;
+      }
+      table:nth-of-type(2) tr:first-child :nth-child(4) {
+        background-color: cornflowerblue;
+      }
+      table:nth-of-type(2) tr:nth-child(2) :nth-child(1) {
+        background-color: salmon;
+      }
+      table:nth-of-type(2) tr:nth-child(2) :nth-child(2) {
+        background-color: turquoise;
+      }
+      table:nth-of-type(2) tr:nth-child(2) :nth-child(5) {
+        background-color: salmon;
+      }
+      table:nth-of-type(2) tr:nth-child(3) :nth-child(2) {
+        background-color: salmon;
+      }
+      table:nth-of-type(2) tr:nth-child(3) :nth-child(3) {
+        background-color: turquoise;
+      }
+    </style>
+
+    <!--[if gte mso 9
+      ]><xml>
+        <mso:CustomDocumentProperties>
+          <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor
+            msdt:dt="string"
+            >GUTIERREZ PRECIADO, LUIS
+            FERNANDO</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor
+          >
+          <mso:xd_Signature msdt:dt="string"></mso:xd_Signature>
+          <mso:TemplateUrl msdt:dt="string"></mso:TemplateUrl>
+          <mso:Order msdt:dt="string">894300.000000000</mso:Order>
+          <mso:ComplianceAssetId msdt:dt="string"></mso:ComplianceAssetId>
+          <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author
+            msdt:dt="string"
+            >GUTIERREZ PRECIADO, LUIS
+            FERNANDO</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author
+          >
+          <mso:xd_ProgID msdt:dt="string"></mso:xd_ProgID>
+          <mso:ContentTypeId msdt:dt="string"
+            >0x0101009AF89F552A2F4149A5B5EC1687935FB5</mso:ContentTypeId
+          >
+          <mso:_SourceUrl msdt:dt="string"></mso:_SourceUrl>
+          <mso:_SharedFileIndex msdt:dt="string"></mso:_SharedFileIndex>
+        </mso:CustomDocumentProperties> </xml
+    ><![endif]-->
+  </head>
+
+  <body>
+    <h1>Cuantos valores puedes atrapar</h1>
+
+    <p>Reglas:</p>
+
+    <ul>
+      <li>Debes hacer que se vea similar a la imagen de solución</li>
+      <li>Cada color representa una regla de CSS</li>
+      <li>
+        <span id="warning">
+          No añadir atributos o cambiar contenido al HTML
+        </span>
+      </li>
+    </ul>
+
+    <h2>Primera tabla</h2>
+
+    <table border="1" width="600px" height="200px">
+      <tr>
+        <td>-1</td>
+        <td>2</td>
+        <td data-val="neg">-1</td>
+        <td>-1</td>
+        <td>3</td>
+        <td>-1</td>
+        <td class="pos">1</td>
+        <td>4</td>
+        <td data-val="neg">-1</td>
+        <td>-1</td>
+      </tr>
+      <tr class="pos">
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td class="pos">1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+      </tr>
+      <tr>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td data-val="neg">-1</td>
+        <td class="pos">1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>-1</td>
+        <td data-val="pos">5</td>
+        <td>-1</td>
+        <td class="pos">1</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td data-val="pos">1</td>
+      </tr>
+    </table>
+
+    <h2>Segunda tabla</h2>
+    <table border="1" width="600px">
+      <tr>
+        <td>-1</td>
+        <td>-1</td>
+        <td colspan="3">-1</td>
+        <td>3</td>
+        <td>-1</td>
+        <td rowspan="3">5</td>
+      </tr>
+      <tr>
+        <td colspan="2">1</td>
+        <td>3</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td colspan="2">1</td>
+      </tr>
+      <tr>
+        <td>-1</td>
+        <td colspan="2">1</td>
+        <td>3</td>
+        <td>-1</td>
+        <td>-1</td>
+        <td>-1</td>
+      </tr>
+    </table>
+  </body>
+</html>

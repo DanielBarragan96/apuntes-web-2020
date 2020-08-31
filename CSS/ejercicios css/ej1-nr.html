@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+    Daniel Barragan Alvarez
+    ie702554
+-->
+<html
+  lang="en"
+  xmlns:mso="urn:schemas-microsoft-com:office:office"
+  xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>CSS Selectores EJ1</title>
+
+    <!--     
+    background-color:orangered;
+    background-color:palegreen;
+    color: white;
+    font-size: xx-large;
+    font-size: xx-small;
+    font-style: italic;
+    font-weight: bold;
+    list-style: none;
+    opacity: 0.5;
+    text-align: center;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-shadow: 0px 2px 5px black;
+    width: 100px;  
+-->
+    <style>
+      li {
+        list-style: none;
+        text-align: center;
+        width: 100px;
+      }
+      li:hover {
+        background-color: blue;
+      }
+      [data-desc*="no-si"] {
+        font-weight: bold;
+      }
+      [data-desc*="uso-poco"] {
+        font-size: xx-small;
+      }
+      [data-desc*="uso-mucho"] {
+        font-size: xx-large;
+        font-style: italic;
+      }
+      [data-desc*="re-no"] {
+        background-color: orangered;
+        opacity: 0.5;
+        color: white;
+      }
+      [data-desc*="re-si"] {
+        background-color: palegreen;
+      }
+      [data-desc$="e-"] {
+        text-decoration-line: underline;
+        text-decoration-style: wavy;
+      }
+      [data-desc$="e+"] {
+        text-shadow: 0px 2px 5px black;
+      }
+      p::first-letter {
+        color: red;
+        font-size: xx-large;
+      }
+    </style>
+
+    <!--[if gte mso 9
+      ]><xml>
+        <mso:CustomDocumentProperties>
+          <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor
+            msdt:dt="string"
+            >GUTIERREZ PRECIADO, LUIS
+            FERNANDO</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Editor
+          >
+          <mso:xd_Signature msdt:dt="string"></mso:xd_Signature>
+          <mso:TemplateUrl msdt:dt="string"></mso:TemplateUrl>
+          <mso:Order msdt:dt="string">893600.000000000</mso:Order>
+          <mso:ComplianceAssetId msdt:dt="string"></mso:ComplianceAssetId>
+          <mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author
+            msdt:dt="string"
+            >GUTIERREZ PRECIADO, LUIS
+            FERNANDO</mso:display_urn_x003a_schemas-microsoft-com_x003a_office_x003a_office_x0023_Author
+          >
+          <mso:xd_ProgID msdt:dt="string"></mso:xd_ProgID>
+          <mso:ContentTypeId msdt:dt="string"
+            >0x0101009AF89F552A2F4149A5B5EC1687935FB5</mso:ContentTypeId
+          >
+          <mso:_SourceUrl msdt:dt="string"></mso:_SourceUrl>
+          <mso:_SharedFileIndex msdt:dt="string"></mso:_SharedFileIndex>
+        </mso:CustomDocumentProperties> </xml
+    ><![endif]-->
+  </head>
+  <body>
+    <!-- List items con width de 100px, texto alineado, sin figura -->
+
+    <!-- categorias:
+            novedad: no-no, no-si   (texto: normal, bold)
+            uso: uso-poco, uso-normal, uso-mucho  (tamaño de letra: de más pequeño a más grande)
+            recomendacion: re-no, re-poco, re-si (background (rojo con opacidad a 0.5, white, verde) )
+            enfasis e+ sombreado  , e- subrayado wavy
+    -->
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, in nihil?
+      Quas asperiores corrupti temporibus sapiente quaerat sed? Eligendi
+      doloremque consequuntur tempore placeat ipsum quae nesciunt explicabo
+      ipsam corporis fugiat.
+    </p>
+
+    <ul>
+      <li class="tag" data-desc="no-no uso-normal re-no-e-">center</li>
+      <li class="tag" data-desc="no-no uso-mucho re-neutro">p</li>
+      <li class="tag" data-desc="no-no uso-mucho re-si-e+">div</li>
+      <li class="tag" data-desc="no-no uso-mucho re-si">html</li>
+      <li class="tag" data-desc="no-si uso-poco re-neutro">article</li>
+      <li class="tag" data-desc="no-no uso-normal re-si-e+">textarea</li>
+      <li class="tag" data-desc="no-si uso-poco re-si">video</li>
+      <li class="tag" data-desc="no-no uso-poco re-no">shadow</li>
+    </ul>
+  </body>
+</html>
