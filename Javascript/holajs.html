@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>JS se ejecuto antes que esta linea</p>
+    <script>
+      /* El modo strict ayuda a evitar varios problemas */
+      "use strict";
+      /* Ejemplos de Javascript */
+      //alert("hola mundo");
+      var x = 10;
+      console.log(x);
+      var x = "10";
+      console.log(x);
+      let y = 20;
+      console.log(y);
+      const Z = y + x;
+      console.log(Z);
+      /* el modo strict no permite hacer esto, ya que
+      se podria acceder desde toda la pagina web */
+      //otroVar = 5;
+
+      let var1 = "hello there",
+        var2 = 10,
+        var3 = "general Kenobi";
+      console.log(var1);
+      console.log(var2);
+      console.log(var3);
+      var1 = var2 = var3 = "Hola";
+      console.log(var1);
+      console.log(var2);
+      console.log(var3);
+
+      /* Tipos de datos */
+      let number1 = 3;
+      let number2 = 1.4556;
+      let str1 = "cadena1";
+      let str2 = "cadena2";
+      let str3 = `cadena${number1}`;
+      let boolean1 = true;
+      let boolean2 = false;
+
+      let array1 = [1, "text", "otro", 1.34, true, ["celda0", "celda1"]];
+      let valArray = array1[0];
+
+      console.log("");
+      console.log(typeof number1);
+      console.log(typeof number2);
+      console.log(typeof str1);
+      console.log(typeof str2);
+      console.log(typeof str3);
+      console.log(typeof boolean1);
+      console.log(typeof boolean2);
+      console.log(typeof array1);
+      console.log(typeof valArray);
+      console.log(typeof noexiste);
+      console.log(typeof typeof noexiste);
+      console.log(typeof null);
+
+      // Mala practica
+      /*
+      let x = "";
+      for (let s in strings) {
+        x += s;
+      }
+      // Buen practica
+      let x = `${s}`;
+      for (let s in strings) {
+        x += `${s}`; // en Java se puede usar StringBuilder
+      }
+      */
+
+      console.log("");
+      console.log("" + 1 + 0); //10
+      console.log("" - 1 + 0); //-1
+      console.log(true + false); //1
+      console.log(6 / "3"); //2
+      console.log("2" * "3"); //6
+      console.log(4 + 5 + "px"); //9px
+      console.log("$" + 4 + 5); //$45
+      console.log("4" - 2); //2
+      console.log("4px" - 2); //Nan
+      console.log(7 / 0); //Infinity
+      console.log(" -9 " + 5); // -9 5
+      console.log(" -9 " - 5); //-14
+      console.log(null + 1); //1
+      console.log(undefined + 1); //NaN
+      console.log("");
+    </script>
+    <p>Cargando</p>
+  </body>
+</html>
