@@ -1,0 +1,19 @@
+[{
+        "id": "323432",
+        "name": "pisco maracuyá",
+        "type": "alcoholic",
+        "price": 333.00
+    },
+    {
+        "id": "35345",
+        "name": "limonada",
+        "type": "non-alcoholic",
+        "price": 33323.00
+    },
+    {
+        "id": "547546756",
+        "name": "coco-cola",
+        "type": "non-alcoholic",
+        "price": 23.50
+    }
+]
