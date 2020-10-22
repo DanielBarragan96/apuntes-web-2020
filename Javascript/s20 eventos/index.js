@@ -38,6 +38,7 @@ calc.addEventListener('click', (event) => {
         }
     } else {
         if(afet_equal) {
+            afet_equal = false;
             document.getElementById("result").value = "";
         }
         document.getElementById("result").value += key;
