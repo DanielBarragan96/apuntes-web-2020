@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .red {
+        background-color: lightcoral;
+      }
+
+      .green {
+        background-color: lightgreen;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bienvenidos</h1>
+    <button class="green" data-correo="algo@correo.com" onclick="saludar(this)">
+      Saludar
+    </button>
+    <button id="btn2" class="green" data-correo="algo@correo.com">
+      Saludar
+    </button>
+    <br />
+    <p id="counter">Value: 0</p>
+    <p id="counterclicks">Counter clicks: 0</p>
+    <button onclick="decrementar()">decrementar</button>
+    <button onclick="incrementar()">incrementar</button>
+    <br />
+    <br />
+
+    <input type="text" name="result" id="result" />
+    <div id="calculadora">
+      <table>
+        <tr>
+          <td><button>1</button></td>
+          <td><button>2</button></td>
+          <td><button>3</button></td>
+          <td><button>+</button></td>
+        </tr>
+        <tr>
+          <td><button>4</button></td>
+          <td><button>5</button></td>
+          <td><button>6</button></td>
+          <td><button>-</button></td>
+        </tr>
+        <tr>
+          <td><button>7</button></td>
+          <td><button>8</button></td>
+          <td><button>9</button></td>
+          <td><button>=</button></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><button>0</button></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      let btn2 = document.getElementById("btn2");
+      btn2.onclick = saludar;
+      function saludar(element) {
+        if (element) {
+          element.setAttribute("class", "red");
+        } else {
+          let otherelement = document.getElementById(this.id);
+          otherelement.setAttribute("class", "red");
+        }
+        alert("Hola a todos");
+      }
+
+      let i = 0;
+      function incrementar() {
+        document.getElementById("counter").innerHTML = "Value: " + ++i;
+        addCounter();
+      }
+      function decrementar() {
+        document.getElementById("counter").innerHTML = "Value: " + --i;
+        addCounter();
+      }
+      let clicks = 0;
+      function addCounter() {
+        document.getElementById("counterclicks").innerHTML =
+          "Counter clicks: " + ++clicks;
+      }
+    </script>
+    <script src="index.js"></script>
+  </body>
+</html>
