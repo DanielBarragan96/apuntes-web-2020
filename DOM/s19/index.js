@@ -69,6 +69,7 @@ function remove_item(element){
     let drinkId = element.getAttribute('data-id');
     let drinkRev = element.getAttribute('data-rev');
     let url = `${drinksAPI}/${drinkId}?rev=${drinkRev}`;
+    // //La siguiente funcion elimina el elemento del servidor
     deleteJSON(url,()=>{
         console.log('deleting drink sucess..');
         getData();
@@ -110,7 +111,7 @@ function drinkToHTML(drink){
                     <ul>
                         <li><strong>Tipo:</strong> ${drink.type} </li>
                         <li><strong>Precio:</strong> ${drink.price}</li>
-                        <li><button  type="button" class="btn btn-danger btn-sm" data-id="${drink.id}" data-rev="${drink.rev}" >
+                        <li><button  onclick="remove_item(this)" type="button" class="btn btn-danger btn-sm" data-id="${drink.id}" data-rev="${drink.rev}" >
                             <svg width="1em" height="1em"
                                     viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -142,3 +143,10 @@ function saveDrink(){
 
 }
 
+//agregar el event listener a getDrinksBtn hasta que se termine de cargar el DOM completo
+document.addEventListener("DOMContentLoaded", function() {
+    let getDrinksBtn = document.getElementById("getDrinksBtn");
+    getDrinksBtn.addEventListener('click', (event) => {
+        getData();
+    })
+})
