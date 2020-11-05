@@ -1,0 +1,1218 @@
+{
+	"info": {
+		"_postman_id": "d5141687-53f2-4c1e-a20a-6a28b1f13c35",
+		"name": "Pratica3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get TOken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "83d4841e-5119-4198-8029-3701dfba175a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Token is present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.token).is.not.empty;",
+							"    if(jsonData.token)",
+							"        pm.environment.set(\"token\", jsonData.token);",
+							"});",
+							";",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"john@gmail.com\",\n    \"password\":\"doej\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TOken Wrong Credentials",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e799cbda-6a4c-4a00-81bb-43dde2f1b05c",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"jog@gmail.com\",\n    \"password\":\"tertr\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/login",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new User Error Middleware AUTH",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ba309800-bad5-468f-b3e1-58053c6e2637",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"WRONGUSER\",\n    \"apellidos\": \"WRONGUSER\",\n    \"email\": \"WRONGUSER\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fe569e8b-0377-4c52-8719-9a2457ce5ea0",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"pm.test(\"Id is new\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.uid).to.not.eql(10001);",
+							"});",
+							"pm.test(\"Name is present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.nombre).to.eql('Juana');",
+							"});",
+							"pm.test(\"email is present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.email).to.eql('jog@gmail.com');",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new User Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d786b45b-4a3e-45b2-b39d-9937052dd621",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users AUTH Middleware Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "01d37760-e0b9-4f74-9c02-875aead44d37",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers normal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3f3ddf22-cbdc-4e64-bbd3-47a0e3b0c463",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Size of data is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.lessThan(6);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 4 props in object \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(4);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers Filter names",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e8da2628-4ab4-40a8-a3ed-4589e5980dda",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Size of data is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(1);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 4 props in object \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(4);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users?name=ua",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "ua"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers Filter names and page limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aa1059b4-3cc5-4787-b898-90734643ed72",
+						"exec": [
+							"",
+							"",
+							"pm.test(\"Start id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].uid).to.eql(10025);",
+							"});",
+							"pm.test(\"End id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[22].uid).to.eql(10047);",
+							"});",
+							"pm.test(\"Size of data is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.lessThan(24);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 4 props in object \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(4);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users?name=nom&page=2&limit=23",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "nom"
+						},
+						{
+							"key": "page",
+							"value": "2"
+						},
+						{
+							"key": "limit",
+							"value": "23"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers Filter page limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "53496bb1-2a51-4c9a-b1af-59d83597749f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Start id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].uid).to.eql(10025);",
+							"});",
+							"pm.test(\"End id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[22].uid).to.eql(10047);",
+							"});",
+							"pm.test(\"Size of data is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.lessThan(24);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 4 props in object \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(4);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users?page=1&limit=3",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsers Filter names, page limit,dates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0d4bd478-fa3a-4ede-b2e0-d93e8d134a15",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"User id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].uid).to.eql(10092);",
+							"});",
+							"pm.test(\"Size of data is correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(1);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 4 props in object \", function () {",
+							"    var jsonData = pm.response.json()[0];",
+							"    pm.expect(Object.keys(jsonData).length).to.eql(4);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users?name=nom&page=4&limit=23&date=1990-10-15",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "nom"
+						},
+						{
+							"key": "page",
+							"value": "4"
+						},
+						{
+							"key": "limit",
+							"value": "23"
+						},
+						{
+							"key": "date",
+							"value": "1990-10-15"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d322dc3e-ce39-4ada-9706-edfe66ade7c9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"id is  correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.uid).to.eql(10015);",
+							"});",
+							"pm.test(\"nombre is defined \", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.nombre).is.not.empty;",
+							"});",
+							"pm.test(\"appellidos is defined \", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.apellidos).is.not.empty;",
+							"});",
+							"pm.test(\"email is defined \", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.email).is.not.empty;",
+							"});",
+							"pm.test(\"Only 8 props in object \", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Object.keys(jsonData).length).to.greaterThan(7);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/correo13@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"correo13@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by Email AUTH",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d69f7187-d969-4e44-bf3d-3036f40f0ddb",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "xxxxxxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/correo13@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"correo13@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "31f8caa3-fd33-440b-a0ca-589057a40084",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Id is new\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.uid).to.not.eql(10001);",
+							"});",
+							"pm.test(\"Name is present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.nombre).to.eql('Juana Adriana');",
+							"});",
+							"pm.test(\"email is present\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.email).to.eql('jog@gmail.com');",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana Adriana\",\n    \"apellidos\": \"Garcia Marquez\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola12333\",\n    \"fecha\": \"2000-10-29\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User Missin Args",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e5d97d15-ff92-4ca2-85ce-732315de24ae",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jog@gmail.com\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User AUTH Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2ca3f56-b94f-4453-b352-f8be85477854",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "xxxxxxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User AUTH Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8d916bcd-6fb8-4fbf-a489-57d976421f20",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "xxxxxxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "638f59fc-2f1f-4cfc-8481-3f6b679b0023",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by Email After delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f2efb3d-cc40-4e90-a593-09d8598ed9c4",
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-user",
+						"type": "text",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juana\",\n    \"apellidos\": \"Garcia\",\n    \"email\": \"jog@gmail.com\",\n    \"password\": \"hola123\",\n    \"fecha\": \"2000-10-28\",\n    \"sexo\": \"M\",\n    \"uid\": 10001,\n    \"image\": \"https://randomuser.me/api/portraits/women/0.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/users/jog@gmail.com",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"jog@gmail.com"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
