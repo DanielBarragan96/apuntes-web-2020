@@ -11,7 +11,6 @@ app.use(express.urlencoded({
     extended: true
 }))
 
-const usersRouter = require('./routes/usersRoutes');
 const UsersController = require('./controllers/usersController');
 const PORT = process.env.PORT || 3000;
 
@@ -32,7 +31,7 @@ function authentication(req, res, next) {
     }
 }
 
-app.use('/api/users', authentication, usersRouter);
+// app.use('/api/users', authentication, usersRouter);
 
 app.post('/api/login', (req, res) => {
     if (req.body.email && req.body.password) {
@@ -57,6 +56,8 @@ app.get('/', (req, res) => {
     res.send('Users app práctica 4');
 });
 
+const usersRouter = require('./routes/usersRoutes');
+app.use('/api/users/', usersRouter);
 
 app.listen(PORT, () => {
     console.log(`Example app listening at http://localhost:${PORT}`);

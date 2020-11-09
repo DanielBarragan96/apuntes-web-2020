@@ -15,7 +15,9 @@ router.post('/', (req, res) => {
         if (u) {
             res.status(400).send('user already exists');
         } else {
-            res.status(201).send(usersCtrl.insertUser(b));
+            usersCtrl.insertUser(b, (newUser) => {
+                res.status(201).send(newUser);
+            })
         }
     } else {
         res.status(400).send('missing arguments');
@@ -64,15 +66,17 @@ router.get('/', (req, res) => {
 
 router.get('/:email', (req, res) => {
     let userCtrl = new UsersController();
-    let users = userCtrl.getList();
+
     if (req.params.email) {
-        users = users.find(ele => ele.email === req.params.email);
-        if (users) {
-            res.send(users);
-        } else {
-            res.set('Content-Type', 'application/json');
-            res.status(204).send({});
-        }
+        userCtrl.getUserByEmail(req.params.email, (user) => {
+            // users = users.find(ele => ele.email === req.params.email);
+            if (user) {
+                res.send(user);
+            } else {
+                res.set('Content-Type', 'application/json');
+                res.status(204).send({});
+            }
+        });
     } else {
         res.status(400).send('missing params');
     }
