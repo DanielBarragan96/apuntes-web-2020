@@ -24,7 +24,7 @@ async function authentication(req, res, next) {
         let userctrl = new UsersController();
         try {
             let user = await userctrl.getUser(id);
-            // console.log(user);
+            console.log(user);
             if (user && user.token === xauth) {
                 next();
             } else {
@@ -45,16 +45,18 @@ app.post('/api/login', async (req, res) => {
         // let pass = bcryp.hash(req.body.password,5);
         // let user = await uctrl.getUserByCredentials(req.body.email,pass);
         let user = await uctrl.getUserByCredentials(req.body.email, req.body.password);
-        // console.log(user);
+        // user.password === pass
         if (user) {
             // let token = randomize('Aa0','10')+"-"+user.uid;
             let token = jwt.sign({
                 "uid": user._id
             }, SECRET_JWT);
             user.token = token;
-            let uuser = await uctrl.updateUser(user);
-            res.status(200).send({
-                "token": token
+            console.log(user);
+            uctrl.updateUser(user, (uuser) => {
+                res.status(200).send({
+                    "token": token
+                });
             });
         } else {
             res.status(401).send('Wrong credentials');
