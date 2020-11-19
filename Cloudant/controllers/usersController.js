@@ -40,7 +40,7 @@ class UsersController {
             cbError(error);
         });
     }
-    updateUser(user) {
+    async updateUser(user) {
         let index = USERS_DB.findIndex(element => element.uid === user.uid);
         if (index > -1) {
             USERS_DB[index] = Object.assign(USERS_DB[index], user);
@@ -82,7 +82,7 @@ class UsersController {
             cbOk(users);
         });
     }
-    getUserByCredentials(email, password, cbOk) {
+    async getUserByCredentials(email, password) {
         // let users = USERS_DB.filter((item,index,arr)=>{
         //     if( item.password.toLowerCase()=== password.toLowerCase() &&
         //         item.email.toLowerCase() === email.toLowerCase()){
@@ -101,14 +101,14 @@ class UsersController {
                 }
             }
         };
-        USERS_DB_CLOUDANT.find(q).then((docs) => {
-            console.log(docs);
-            if (docs.docs.length > 1) {
-                cbOk(true);
-            } else {
-                cbOk(false);
-            }
-        });
+        let doc = await USERS_DB_CLOUDANT.find(q);
+        console.log(doc);
+        if (doc.docs.length > 0) {
+            return doc.docs[0];
+        } else {
+            return false;
+        }
+
     }
     getUniqueUser(name, lastname, email, cbOk) {
         // let users = USERS_DB.filter((item,index,arr)=>{
@@ -154,20 +154,19 @@ class UsersController {
             }
         });
     }
-    getUser(id) {
+    async getUser(id) {
         // let user = USERS_DB.find(ele=>ele.uid ===id);
         // return user;
-        const q = {
-            selector: {
-                email: {
-                    "$eq": email
-                }
-            }
-        };
-        USERS_DB_CLOUDANT.get(id).then((docs) => {
-            console.log(docs);
-            cbOk(docs.docs[0]);
-        });
+        // const q = {
+        //     selector: {
+        //         email: {
+        //             "$eq": email
+        //         }
+        //     }
+        // };
+        let docs = await USERS_DB_CLOUDANT.get(id);
+        // console.log(docs);
+        return docs;
     }
     getUserByEmail(email, cbOk) {
         // let user = USERS_DB.find(ele=>ele.email ===email);
