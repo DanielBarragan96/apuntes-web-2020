@@ -52,11 +52,11 @@ app.post('/api/login', async (req, res) => {
                 "uid": user._id
             }, SECRET_JWT);
             user.token = token;
-            console.log(user);
-            uctrl.updateUser(user, (uuser) => {
-                res.status(200).send({
-                    "token": token
-                });
+            // console.log(user);
+            let uuser = await uctrl.updateUser(user);
+            console.log(uuser);
+            res.status(200).send({
+                "token": token
             });
         } else {
             res.status(401).send('Wrong credentials');

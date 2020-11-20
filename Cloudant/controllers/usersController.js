@@ -5,7 +5,9 @@ const CloudantSDK = require('@cloudant/cloudant');
 let username = CLOUDANT_CREDS.cloudant_username;
 let password = CLOUDANT_CREDS.cloudant_password;
 let url = CLOUDANT_CREDS.url;
-const cloudant = new CloudantSDK(url);
+const cloudant = new CloudantSDK({
+    url: url
+});
 const USERS_DB_CLOUDANT = cloudant.db.use('users');
 let CURRENT_ID = 0;
 
@@ -27,6 +29,7 @@ class UsersController {
         // user.uid = this.generateId();
         // USERS_DB.push(user);
         // return user;
+        // user.password = bcrypt.hashSync(user.password,5);
         USERS_DB_CLOUDANT.insert(user).then((addedEntry) => {
             console.log(addedEntry);
             if (addedEntry.ok) {
@@ -41,12 +44,36 @@ class UsersController {
         });
     }
     async updateUser(user) {
-        let index = USERS_DB.findIndex(element => element.uid === user.uid);
-        if (index > -1) {
-            USERS_DB[index] = Object.assign(USERS_DB[index], user);
+        // let index = USERS_DB.findIndex(element => element.uid === user.uid);
+        // if(index>-1){
+        //     USERS_DB[index] = Object.assign(USERS_DB[index],user);
+        //     return user;
+        // }else{
+        //     return undefined;
+        // }
+        let updatee = {
+            nombre: user.nombre,
+            apellidos: user.apellidos,
+            email: user.email,
+            password: user.password,
+            fecha: user.fecha,
+            sexo: user.sexo,
+            image: user.image,
+            _id: user._id,
+            _rev: user._rev
+        }
+        if (user.token) {
+            updatee.token = user.token;
+        }
+        console.log(updatee);
+        let addedEntry = await USERS_DB_CLOUDANT.insert(updatee);
+        console.log(addedEntry);
+        if (addedEntry.ok) {
+            user.rev = addedEntry.rev;
+            user.uid = addedEntry.id;
             return user;
         } else {
-            return undefined;
+            return false;
         }
     }
     deleteUser(user, cbOk) {
@@ -67,22 +94,31 @@ class UsersController {
             }
         })
     }
-    getList(cbOk) {
+    // getList(cbOk){
+    //     // return USERS_DB;
+    //     let users = new Array();
+    //     USERS_DB_CLOUDANT.list({include_docs:true}).then(entries =>{
+    //         console.log(entries);
+    //         for(let entry of entries.rows){
+    //             console.log(entry.doc);
+    //             users.push(entry.doc);
+    //         }
+    //         console.table(users);
+    //         cbOk(users);
+    //     });
+    // } 
+    async getList(cbOk) {
         // return USERS_DB;
         let users = new Array();
-        USERS_DB_CLOUDANT.list({
+        let entries = await USERS_DB_CLOUDANT.list({
             include_docs: true
-        }).then(entries => {
-            console.log(entries);
-            for (let entry of entries.rows) {
-                console.log(entry.doc);
-                users.push(entry.doc);
-            }
-            console.table(users);
-            cbOk(users);
         });
+        for (let entry of entries.rows) {
+            users.push(entry.doc);
+        }
+        return users;
     }
-    async getUserByCredentials(email, password) {
+    async getUserByCredentials(email, password, cbOk) {
         // let users = USERS_DB.filter((item,index,arr)=>{
         //     if( item.password.toLowerCase()=== password.toLowerCase() &&
         //         item.email.toLowerCase() === email.toLowerCase()){
@@ -101,14 +137,16 @@ class UsersController {
                 }
             }
         };
-        let doc = await USERS_DB_CLOUDANT.find(q);
-        console.log(doc);
-        if (doc.docs.length > 0) {
-            return doc.docs[0];
+        let docs = await USERS_DB_CLOUDANT.find(q);
+        // console.log(docs);
+        // console.log(docs.docs.length);
+        if (docs.docs.length > 0) {
+            // cbOk(true);
+            return docs.docs[0];
         } else {
-            return false;
+            // cbOk(false);
+            return;
         }
-
     }
     getUniqueUser(name, lastname, email, cbOk) {
         // let users = USERS_DB.filter((item,index,arr)=>{
@@ -157,15 +195,7 @@ class UsersController {
     async getUser(id) {
         // let user = USERS_DB.find(ele=>ele.uid ===id);
         // return user;
-        // const q = {
-        //     selector: {
-        //         email: {
-        //             "$eq": email
-        //         }
-        //     }
-        // };
         let docs = await USERS_DB_CLOUDANT.get(id);
-        // console.log(docs);
         return docs;
     }
     getUserByEmail(email, cbOk) {
@@ -179,8 +209,6 @@ class UsersController {
             }
         };
         USERS_DB_CLOUDANT.find(q).then((docs) => {
-            console.log(docs);
-
             if (docs.docs.length > 0) {
                 let user = {
                     nombre: docs.docs[0].nombre,

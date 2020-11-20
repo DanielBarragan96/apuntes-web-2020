@@ -1,233 +1,114 @@
-const fs = require('fs');
-const USERS_DB = require('../data/users.json');
-const CLOUDANT_CREDS = require('../localdev-config.json');
-const CloudantSDK = require('@cloudant/cloudant');
-let username = CLOUDANT_CREDS.cloudant_username;
-let password = CLOUDANT_CREDS.cloudant_password;
-let url = CLOUDANT_CREDS.url;
-const cloudant = new CloudantSDK({
-    url: url
-});
-const USERS_DB_CLOUDANT = cloudant.db.use('users');
-let CURRENT_ID = 0;
+'use strict';
+const {
+    log
+} = require('console');
+const express = require('express');
+const UsersController = require('../controllers/usersController');
+const usersCtrl = new UsersController();
+const router = express();
 
-let uids = USERS_DB.map((obj) => {
-    return obj.uid
-});
-CURRENT_ID = Math.max(...uids) + 1;
-console.log(`Current id: ${CURRENT_ID}`);
-// console.table(USERS_DB);
-class UsersController {
-
-    generateId() {
-        let id = CURRENT_ID;
-        CURRENT_ID++;
-        fs
-        return id;
-    }
-    insertUser(user, cbOk, cbError) {
-        // user.uid = this.generateId();
-        // USERS_DB.push(user);
-        // return user;
-        // user.password = bcrypt.hashSync(user.password,5);
-        USERS_DB_CLOUDANT.insert(user).then((addedEntry) => {
-            console.log(addedEntry);
-            if (addedEntry.ok) {
-                user.rev = addedEntry.rev;
-                user.uid = addedEntry.id;
-                cbOk(user);
-            } else {
-                cbOk();
-            }
-        }).catch(error => {
-            cbError(error);
-        });
-    }
-    updateUser(user, cbOk, cberror) {
-        // let index = USERS_DB.findIndex(element => element.uid === user.uid);
-        // if(index>-1){
-        //     USERS_DB[index] = Object.assign(USERS_DB[index],user);
-        //     return user;
-        // }else{
-        //     return undefined;
-        // }
-        let updatee = {
-            nombre: user.nombre,
-            apellidos: user.apellidos,
-            email: user.email,
-            password: user.password,
-            fecha: user.fecha,
-            sexo: user.sexo,
-            image: user.image,
-            _id: user._id,
-            _rev: user._rev
-        }
-        if (user.token) {
-            updatee.token = user.token;
-        }
-        USERS_DB_CLOUDANT.insert(updatee).then((addedEntry) => {
-            console.log(addedEntry);
-            if (addedEntry.ok) {
-                user.rev = addedEntry.rev;
-                user.uid = addedEntry.id;
-                cbOk(user);
-            } else {
-                cbOk();
-            }
-        }).catch(error => {
-            cbError(error);
-        });
-    }
-    deleteUser(user, cbOk) {
-        // let index = USERS_DB.findIndex(element => element.uid === user.uid);
-        // if(index>-1){
-        //     USERS_DB.splice(index,1);
-        //     return true;
-        // }else{
-        //     return false;
-        // }
-        console.log('deleting user');
-        USERS_DB_CLOUDANT.destroy(user.uid, user.rev).then((body) => {
-            console.log(body);
-            if (body.ok) {
-                cbOk(true);
-            } else {
-                cbOk(false);
-            }
-        })
-    }
-    // getList(cbOk){
-    //     // return USERS_DB;
-    //     let users = new Array();
-    //     USERS_DB_CLOUDANT.list({include_docs:true}).then(entries =>{
-    //         console.log(entries);
-    //         for(let entry of entries.rows){
-    //             console.log(entry.doc);
-    //             users.push(entry.doc);
-    //         }
-    //         console.table(users);
-    //         cbOk(users);
-    //     });
-    // } 
-    async getList(cbOk) {
-        // return USERS_DB;
-        let users = new Array();
-        let entries = await USERS_DB_CLOUDANT.list({
-            include_docs: true
-        });
-        for (let entry of entries.rows) {
-            users.push(entry.doc);
-        }
-        return users;
-    }
-    async getUserByCredentials(email, password, cbOk) {
-        // let users = USERS_DB.filter((item,index,arr)=>{
-        //     if( item.password.toLowerCase()=== password.toLowerCase() &&
-        //         item.email.toLowerCase() === email.toLowerCase()){
-        //         return true;
-        //     }
-        //     return false;
-        // });
-        // return users[0];
-        const q = {
-            selector: {
-                password: {
-                    "$eq": password
-                },
-                email: {
-                    "$eq": email
-                }
-            }
-        };
-        let docs = await USERS_DB_CLOUDANT.find(q);
-        // console.log(docs);
-        // console.log(docs.docs.length);
-        if (docs.docs.length > 0) {
-            // cbOk(true);
-            return docs.docs[0];
+router.post('/', (req, res) => {
+    let b = req.body;
+    if (b.nombre && b.apellidos && b.email && b.sexo && b.fecha) {
+        let u = usersCtrl.getUniqueUser(b.nombre, b.apellidos, b.email);
+        console.log(u);
+        if (u) {
+            res.status(400).send('user already exists');
         } else {
-            // cbOk(false);
-            return;
+            usersCtrl.insertUser(b, (newUser) => {
+                res.status(201).send(newUser);
+            })
         }
+    } else {
+        res.status(400).send('missing arguments');
     }
-    getUniqueUser(name, lastname, email, cbOk) {
-        // let users = USERS_DB.filter((item,index,arr)=>{
-        //     if(item.nombre.toLowerCase()=== name.toLowerCase() &&
-        //         item.apellidos.toLowerCase()=== lastname.toLowerCase() &&
-        //         item.email.toLowerCase() === email.toLowerCase()){
-        //         return true;
-        //     }
-        //     return false;
-        // });
-        // return users[0];
-        console.log(`$getting unique user ${name} ${lastname} ${email}`);
-        const q = {
-            selector: {
-                nombre: {
-                    "$eq": name
-                },
-                apellidos: {
-                    "$eq": lastname
-                },
-                email: {
-                    "$eq": email
+});
+
+router.get('/', (req, res) => {
+    let userCtrl = new UsersController();
+    userCtrl.getList(users => {
+        if (req.query.name || req.query.lastname) {
+            let nom = (req.query.name) ? req.query.name : '';
+            let ap = (req.query.lastname) ? req.query.lastname : '';
+            users = users.filter((ele, index, arr) => {
+                let isMatch = true;
+                if (nom) {
+                    isMatch &= ele.nombre.toUpperCase().includes(nom.toUpperCase())
                 }
-            }
-        };
-        USERS_DB_CLOUDANT.find(q).then((docs) => {
-            console.log(docs);
-            if (docs.docs.length > 1) {
-                let user = {
-                    nombre: docs.docs[0].nombre,
-                    apellidos: docs.docs[0].apellidos,
-                    email: docs.docs[0].email,
-                    password: docs.docs[0].password,
-                    fecha: docs.docs[0].fecha,
-                    sexo: docs.docs[0].sexo,
-                    image: docs.docs[0].image,
-                    uid: docs.docs[0]._id,
-                    rev: docs.docs[0]._rev
+                if (ap) {
+                    isMatch &= ele.apellidos.toUpperCase().includes(ap.toUpperCase())
                 }
-                cbOk(user);
-            } else {
-                cbOk();
+                return isMatch;
+            });
+        }
+        if (req.query.page) {
+            let limit = (req.query.limit) ? parseInt(req.query.limit) : 5;
+            let page = parseInt(req.query.page) * limit - limit;
+            users = users.slice(page, page + limit);
+        } else {
+            users = users.slice(0, 0 + 5);
+        }
+        if (req.query.date) {
+            users = users.filter(ele => new Date(ele.fecha).getTime() === new Date(req.query.date).getTime());
+        }
+
+        users = users.map((val, index, arra) => {
+            return {
+                "nombre": val.nombre,
+                "apellidos": val.apellidos,
+                "email": val.email,
+                "uid": val._id
             }
         });
-    }
-    async getUser(id) {
-        // let user = USERS_DB.find(ele=>ele.uid ===id);
-        // return user;
-        let docs = await USERS_DB_CLOUDANT.get(id);
-        return docs;
-    }
-    getUserByEmail(email, cbOk) {
-        // let user = USERS_DB.find(ele=>ele.email ===email);
-        // return user;
-        const q = {
-            selector: {
-                email: {
-                    "$eq": email
-                }
-            }
-        };
-        USERS_DB_CLOUDANT.find(q).then((docs) => {
-            if (docs.docs.length > 0) {
-                let user = {
-                    nombre: docs.docs[0].nombre,
-                    apellidos: docs.docs[0].apellidos,
-                    email: docs.docs[0].email,
-                    password: docs.docs[0].password,
-                    fecha: docs.docs[0].fecha,
-                    sexo: docs.docs[0].sexo,
-                    image: docs.docs[0].image,
-                    uid: docs.docs[0]._id,
-                    rev: docs.docs[0]._rev
-                }
-                cbOk(user);
+        res.send(users);
+    });
+});
+
+router.get('/:email', (req, res) => {
+    let userCtrl = new UsersController();
+
+    if (req.params.email) {
+        userCtrl.getUserByEmail(req.params.email, (user) => {
+            // users = users.find(ele => ele.email === req.params.email);
+            if (user) {
+                res.send(user);
             } else {
-                cbOk();
+                res.set('Content-Type', 'application/json');
+                res.status(204).send({});
             }
         });
+    } else {
+        res.status(400).send('missing params');
     }
-}
-module.exports = UsersController;
+});
+router.put('/:email', (req, res) => {
+    let b = req.body;
+    if (req.params.email && (b.nombre || b.apellidos || b.password || b.fecha)) {
+        let u = usersCtrl.getUserByEmail(b.email);
+        if (u) {
+            b.uid = u.uid;
+            Object.assign(u, b);
+            res.status(200).send(usersCtrl.updateUser(u));
+        } else {
+            res.status(404).send('user does not exist');
+        }
+    } else {
+        res.status(400).send('missing arguments');
+    }
+});
+
+router.delete('/:email', (req, res) => {
+    if (req.params.email) {
+        let u = usersCtrl.getUserByEmail(req.params.email);
+        if (u) {
+            res.status(200).send({
+                "deleted": usersCtrl.deleteUser(u)
+            });
+        } else {
+            res.status(404).send('user does not exist');
+        }
+    } else {
+        res.status(400).send('missing arguments');
+    }
+});
+module.exports = router;
