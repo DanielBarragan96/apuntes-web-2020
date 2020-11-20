@@ -24,44 +24,43 @@ router.post('/', (req, res) => {
     }
 });
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     let userCtrl = new UsersController();
-    userCtrl.getList(users => {
-        if (req.query.name || req.query.lastname) {
-            let nom = (req.query.name) ? req.query.name : '';
-            let ap = (req.query.lastname) ? req.query.lastname : '';
-            users = users.filter((ele, index, arr) => {
-                let isMatch = true;
-                if (nom) {
-                    isMatch &= ele.nombre.toUpperCase().includes(nom.toUpperCase())
-                }
-                if (ap) {
-                    isMatch &= ele.apellidos.toUpperCase().includes(ap.toUpperCase())
-                }
-                return isMatch;
-            });
-        }
-        if (req.query.page) {
-            let limit = (req.query.limit) ? parseInt(req.query.limit) : 5;
-            let page = parseInt(req.query.page) * limit - limit;
-            users = users.slice(page, page + limit);
-        } else {
-            users = users.slice(0, 0 + 5);
-        }
-        if (req.query.date) {
-            users = users.filter(ele => new Date(ele.fecha).getTime() === new Date(req.query.date).getTime());
-        }
-
-        users = users.map((val, index, arra) => {
-            return {
-                "nombre": val.nombre,
-                "apellidos": val.apellidos,
-                "email": val.email,
-                "uid": val._id
+    let users = await userCtrl.getList();
+    if (req.query.name || req.query.lastname) {
+        let nom = (req.query.name) ? req.query.name : '';
+        let ap = (req.query.lastname) ? req.query.lastname : '';
+        users = users.filter((ele, index, arr) => {
+            let isMatch = true;
+            if (nom) {
+                isMatch &= ele.nombre.toUpperCase().includes(nom.toUpperCase())
             }
+            if (ap) {
+                isMatch &= ele.apellidos.toUpperCase().includes(ap.toUpperCase())
+            }
+            return isMatch;
         });
-        res.send(users);
+    }
+    if (req.query.page) {
+        let limit = (req.query.limit) ? parseInt(req.query.limit) : 5;
+        let page = parseInt(req.query.page) * limit - limit;
+        users = users.slice(page, page + limit);
+    } else {
+        users = users.slice(0, 0 + 5);
+    }
+    if (req.query.date) {
+        users = users.filter(ele => new Date(ele.fecha).getTime() === new Date(req.query.date).getTime());
+    }
+
+    users = users.map((val, index, arra) => {
+        return {
+            "nombre": val.nombre,
+            "apellidos": val.apellidos,
+            "email": val.email,
+            "uid": val._id
+        }
     });
+    res.send(users);
 });
 
 router.get('/:email', (req, res) => {

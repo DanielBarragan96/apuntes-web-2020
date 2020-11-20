@@ -24,7 +24,7 @@ async function authentication(req, res, next) {
         let userctrl = new UsersController();
         try {
             let user = await userctrl.getUser(id);
-            console.log(user);
+            // console.log(user);
             if (user && user.token === xauth) {
                 next();
             } else {

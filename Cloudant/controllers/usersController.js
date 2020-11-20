@@ -107,7 +107,7 @@ class UsersController {
     //         cbOk(users);
     //     });
     // } 
-    async getList(cbOk) {
+    async getList() {
         // return USERS_DB;
         let users = new Array();
         let entries = await USERS_DB_CLOUDANT.list({
