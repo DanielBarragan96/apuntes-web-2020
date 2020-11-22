@@ -14,15 +14,15 @@ const usersRouter = require('./routes/usersRoutes');
 const UsersController = require('./controllers/usersController');
 const PORT = process.env.PORT || 3000;
 const SECRET_JWT = 'I3s@2020';
+
 async function authentication(req, res, next) {
     let xauth = req.get('x-auth-user');
     // console.log(xauth);
-    if (xauth) {
-        // let id = xauth.split("-").pop();
-        let token = jwt.verify(xauth, SECRET_JWT);
-        let id = token.uid;
-        let userctrl = new UsersController();
+    if (xauth && xauth.split('.').length > 1) {
         try {
+            let token = jwt.verify(xauth, SECRET_JWT);
+            let id = token.uid;
+            let userctrl = new UsersController();
             let user = await userctrl.getUser(id);
             // console.log(user);
             if (user && user.token === xauth) {

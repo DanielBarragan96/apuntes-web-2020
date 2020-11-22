@@ -7,10 +7,10 @@ const UsersController = require('../controllers/usersController');
 const usersCtrl = new UsersController();
 const router = express();
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     let b = req.body;
     if (b.nombre && b.apellidos && b.email && b.sexo && b.fecha) {
-        let u = usersCtrl.getUniqueUser(b.nombre, b.apellidos, b.email);
+        let u = await usersCtrl.getUniqueUser(b.nombre, b.apellidos, b.email);
         console.log(u);
         if (u) {
             res.status(400).send('user already exists');
@@ -63,31 +63,33 @@ router.get('/', async (req, res) => {
     res.send(users);
 });
 
-router.get('/:email', (req, res) => {
+router.get('/:email', async (req, res) => {
     let userCtrl = new UsersController();
 
     if (req.params.email) {
-        userCtrl.getUserByEmail(req.params.email, (user) => {
-            // users = users.find(ele => ele.email === req.params.email);
-            if (user) {
-                res.send(user);
-            } else {
-                res.set('Content-Type', 'application/json');
-                res.status(204).send({});
-            }
-        });
+        let user = await userCtrl.getUserByEmail(req.params.email);
+        // users = users.find(ele => ele.email === req.params.email);
+        if (user && user !== undefined) {
+            res.send(user);
+        } else {
+            res.set('Content-Type', 'application/json');
+            res.status(404).send('user does not exist');
+        }
     } else {
         res.status(400).send('missing params');
     }
 });
-router.put('/:email', (req, res) => {
+router.put('/:email', async (req, res) => {
     let b = req.body;
     if (req.params.email && (b.nombre || b.apellidos || b.password || b.fecha)) {
-        let u = usersCtrl.getUserByEmail(b.email);
+        let u = await usersCtrl.getUserByEmail(b.email);
         if (u) {
-            b.uid = u.uid;
+            b._id = u.uid;
+            b._rev = u.rev;
             Object.assign(u, b);
-            res.status(200).send(usersCtrl.updateUser(u));
+            console.log(b);
+            let addedEntry = await usersCtrl.updateUser(u);
+            res.status(200).send(addedEntry);
         } else {
             res.status(404).send('user does not exist');
         }
@@ -96,12 +98,13 @@ router.put('/:email', (req, res) => {
     }
 });
 
-router.delete('/:email', (req, res) => {
+router.delete('/:email', async (req, res) => {
     if (req.params.email) {
-        let u = usersCtrl.getUserByEmail(req.params.email);
+        let u = await usersCtrl.getUserByEmail(req.params.email);
         if (u) {
+            let deleted = await usersCtrl.deleteUser(u);
             res.status(200).send({
-                "deleted": usersCtrl.deleteUser(u)
+                "deleted": deleted
             });
         } else {
             res.status(404).send('user does not exist');

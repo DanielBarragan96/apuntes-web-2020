@@ -69,14 +69,14 @@ class UsersController {
         let addedEntry = await USERS_DB_CLOUDANT.insert(updatee);
         console.log(addedEntry);
         if (addedEntry.ok) {
-            user.rev = addedEntry.rev;
-            user.uid = addedEntry.id;
+            user._rev = addedEntry._rev;
+            user._uid = addedEntry._id;
             return user;
         } else {
             return false;
         }
     }
-    deleteUser(user, cbOk) {
+    async deleteUser(user) {
         // let index = USERS_DB.findIndex(element => element.uid === user.uid);
         // if(index>-1){
         //     USERS_DB.splice(index,1);
@@ -85,14 +85,13 @@ class UsersController {
         //     return false;
         // }
         console.log('deleting user');
-        USERS_DB_CLOUDANT.destroy(user.uid, user.rev).then((body) => {
-            console.log(body);
-            if (body.ok) {
-                cbOk(true);
-            } else {
-                cbOk(false);
-            }
-        })
+        let body = await USERS_DB_CLOUDANT.destroy(user.uid, user.rev);
+        console.log(body);
+        if (body.ok) {
+            return body;
+        } else {
+            return false;
+        }
     }
     // getList(cbOk){
     //     // return USERS_DB;
@@ -148,7 +147,7 @@ class UsersController {
             return;
         }
     }
-    getUniqueUser(name, lastname, email, cbOk) {
+    async getUniqueUser(name, lastname, email) {
         // let users = USERS_DB.filter((item,index,arr)=>{
         //     if(item.nombre.toLowerCase()=== name.toLowerCase() &&
         //         item.apellidos.toLowerCase()=== lastname.toLowerCase() &&
@@ -172,25 +171,24 @@ class UsersController {
                 }
             }
         };
-        USERS_DB_CLOUDANT.find(q).then((docs) => {
-            console.log(docs);
-            if (docs.docs.length > 1) {
-                let user = {
-                    nombre: docs.docs[0].nombre,
-                    apellidos: docs.docs[0].apellidos,
-                    email: docs.docs[0].email,
-                    password: docs.docs[0].password,
-                    fecha: docs.docs[0].fecha,
-                    sexo: docs.docs[0].sexo,
-                    image: docs.docs[0].image,
-                    uid: docs.docs[0]._id,
-                    rev: docs.docs[0]._rev
-                }
-                cbOk(user);
-            } else {
-                cbOk();
+        let docs = await USERS_DB_CLOUDANT.find(q);
+        console.log(docs);
+        if (docs.docs.length > 0) {
+            let user = {
+                nombre: docs.docs[0].nombre,
+                apellidos: docs.docs[0].apellidos,
+                email: docs.docs[0].email,
+                password: docs.docs[0].password,
+                fecha: docs.docs[0].fecha,
+                sexo: docs.docs[0].sexo,
+                image: docs.docs[0].image,
+                uid: docs.docs[0]._id,
+                rev: docs.docs[0]._rev
             }
-        });
+            return user;
+        } else {
+            return false;
+        }
     }
     async getUser(id) {
         // let user = USERS_DB.find(ele=>ele.uid ===id);
@@ -198,7 +196,7 @@ class UsersController {
         let docs = await USERS_DB_CLOUDANT.get(id);
         return docs;
     }
-    getUserByEmail(email, cbOk) {
+    async getUserByEmail(email) {
         // let user = USERS_DB.find(ele=>ele.email ===email);
         // return user;
         const q = {
@@ -208,24 +206,29 @@ class UsersController {
                 }
             }
         };
-        USERS_DB_CLOUDANT.find(q).then((docs) => {
-            if (docs.docs.length > 0) {
-                let user = {
-                    nombre: docs.docs[0].nombre,
-                    apellidos: docs.docs[0].apellidos,
-                    email: docs.docs[0].email,
-                    password: docs.docs[0].password,
-                    fecha: docs.docs[0].fecha,
-                    sexo: docs.docs[0].sexo,
-                    image: docs.docs[0].image,
-                    uid: docs.docs[0]._id,
-                    rev: docs.docs[0]._rev
-                }
-                cbOk(user);
-            } else {
-                cbOk();
+        let docs = await USERS_DB_CLOUDANT.find(q);
+        // console.log(docs);
+        if (docs.docs.length > 0) {
+            let user = {
+                nombre: docs.docs[0].nombre,
+                apellidos: docs.docs[0].apellidos,
+                email: docs.docs[0].email,
+                password: docs.docs[0].password,
+                fecha: docs.docs[0].fecha,
+                sexo: docs.docs[0].sexo,
+                image: docs.docs[0].image,
+                uid: docs.docs[0]._id,
+                rev: docs.docs[0]._rev,
+                token: docs.docs[0].token
             }
-        });
+
+            if (docs.docs[0].token) {
+                user.token = docs.docs[0].token;
+            }
+            return user;
+        } else {
+            return;
+        }
     }
 }
 module.exports = UsersController;
